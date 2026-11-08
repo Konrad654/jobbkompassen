@@ -38,6 +38,9 @@ const copy = {
   details:['Annonsuppgifter','Listing details','Stellendetails'],
   original:['Öppna originalannons','Open original listing','Originalanzeige öffnen'],
   live:['Annonser i sökresultaten','Listings in search results','Stellen in den Suchergebnissen'],
+  externalTitle:['Sök hos andra jobbportaler','Search other job portals','Weitere Jobportale durchsuchen'],
+  externalIntro:['De här länkarna öppnar sökningen hos respektive källa.','These links open the search on each provider’s site.','Diese Links öffnen die Suche beim jeweiligen Anbieter.'],
+  noDescription:['Källan har inte skickat någon beskrivning.','The source did not provide a description.','Die Quelle hat keine Beschreibung bereitgestellt.'],
   external:['Extern jobbsökning','External job search','Externe Jobsuche'],
   same:['Jobb i ditt nuvarande land','Jobs in your current country','Jobs in deinem aktuellen Land'],
   noRights:['Landsvalet visar en sökväg. Se Your Europe för villkor om att arbeta utomlands.','Country selection shows your search route. See Your Europe for rules on working abroad.','Die Länderauswahl zeigt deine Suchroute. Informationen zur Arbeit im Ausland findest du bei Your Europe.'],
@@ -119,16 +122,19 @@ function setOptions(id, items, first) {
 }
 function portals() {
   const lang = language();
+  const query = $('query').value.trim();
   const params = new URLSearchParams();
-  if ($('query').value.trim()) params.set('keywords',$('query').value.trim());
+  if (query) params.set('keywords',query);
+  const navSearch = new URL('https://arbeidsplassen.nav.no/stillinger');
+  if (query) navSearch.searchParams.set('q',query);
   if ($('destination').value) params.set('location',new Intl.DisplayNames(['en'],{type:'region'}).of($('destination').value));
   return [
     ['Platsbanken','https://arbetsformedlingen.se/platsbanken/',true],
     ['JobAd Links','https://links.api.jobtechdev.se/',true],
-    ['EURES','https://eures.europa.eu/index_' + lang,false],
+    ['EURES','https://europa.eu/eures/portal/jv-se/home?lang=' + lang,false],
     ['Bundesagentur für Arbeit','https://www.arbeitsagentur.de/jobsuche/',false],
-    ['France Travail','https://candidat.francetravail.fr/offres/',false],
-    ['NAV Arbeidsplassen','https://arbeidsplassen.nav.no/stillinger',false],
+    ['France Travail','https://candidat.francetravail.fr/rechercheoffre/emploi',false],
+    ['NAV Arbeidsplassen',navSearch.href,false],
     ['LinkedIn Jobs','https://www.linkedin.com/jobs/search/?' + params,false],
   ];
 }
@@ -144,7 +150,13 @@ function link(name, url) {
   return node;
 }
 function renderPortals() {
-  $('portals').replaceChildren(...portals().map(([name,url,live]) => {
+  const sources = portals();
+  $('external-portals').replaceChildren(...sources.filter(([, , live]) => !live).map(([name,url]) => {
+    const item = element('li');
+    item.append(link(name,url));
+    return item;
+  }));
+  $('portals').replaceChildren(...sources.map(([name,url,live]) => {
     const card = element('div',null,'portal');
     card.append(link(name,url),element('p',t(live ? 'live' : 'external')));
     return card;
@@ -182,7 +194,7 @@ function normalizeJob(raw, feed) {
   const labels = list => (list ?? []).map(item => item.label).filter(Boolean);
   const requirements = raw.must_have ?? {};
   const salary = raw.salary_description ?? '';
-  const description = raw.description?.text ?? raw.brief ?? '';
+  const description = raw.description?.text?.trim() || raw.brief?.trim() || '';
   return {
     url, source:feed.name, title:raw.headline, employer:raw.employer?.name ?? '',
     category:raw.occupation_field?.label ?? '', description, salary,
@@ -252,9 +264,17 @@ function card(job) {
     requirements.append(element('li',t(label) + ' — ' + (value || t('unknown'))));
   }
   details.append(requirements);
-  if (job.description) details.append(element('p',job.description,'description'));
-  details.append(link(t('original'),job.url));
-  article.append(element('span',job.source,'tag'),title,element('p',meta,'meta'),details);
+  const compactDescription = job.description.replace(/\s+/g,' ');
+  const maxLength = 360;
+  const excerpt = compactDescription.length > maxLength
+    ? compactDescription.slice(0,maxLength + 1).replace(/\s+\S*$/,'').slice(0,maxLength) + '…'
+    : compactDescription;
+  if (excerpt !== compactDescription) details.append(element('p',job.description,'description'));
+  article.append(
+    element('span',job.source,'tag'),title,element('p',meta,'meta'),
+    element('p',excerpt || t('noDescription'),'job-excerpt'),
+    details,link(t('original'),job.url),
+  );
   return article;
 }
 function render() {
