@@ -331,7 +331,7 @@ function search() {
     for (const term of queryTerms($('query').value.trim())) {
       const base = {feed,term,category,offset:0,done:false,failed:false};
       if (feed === feeds[1]) {
-        queries.push({...base,country:country ? jobtechCodes.SE : ''});
+        queries.push({...base,country:country ? 'i46j_HmG_v64' : ''});
       } else if (country && jobtechCodes[country]) {
         queries.push({...base,country:jobtechCodes[country]});
       } else {
