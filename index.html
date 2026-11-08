@@ -1,0 +1,42 @@
+<!doctype html>
+<html lang="sv">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="description" content="Sök jobb i Sverige och hitta vägen till jobbportaler i andra europeiska länder.">
+<title>Jobbkompassen</title>
+<link rel="stylesheet" href="./style.css">
+<script defer src="./app.js"></script>
+</head>
+<body>
+<header class="bar"><div class="wrap mast"><a class="brand" href="./"><svg viewBox="0 0 40 40" width="40" height="40" aria-hidden="true"><rect width="40" height="40" rx="12" fill="#c4f882"/><circle cx="20" cy="20" r="12" fill="none" stroke="#172b25" stroke-width="1.4"/><path d="m25 14-3 9-8 3 3-8z" fill="#172b25"/></svg> Jobbkompassen</a>
+<nav><a href="#results" data-t="jobs">Hitta jobb</a><a href="#sources" data-t="sources">Jobbkällor</a></nav>
+<select id="language" aria-label="Språk / Language"><option value="sv">Svenska</option><option value="en">English</option><option value="de">Deutsch</option></select></div></header>
+<main>
+<section class="hero"><div class="wrap intro"><p class="kicker" data-t="kicker">JOBBSÖKNING I EUROPA</p><h1 data-t="heading">Hitta ditt nästa jobb.</h1><p class="lead" data-t="intro">Sök aktuella svenska annonser och hitta vidare till officiella jobbportaler i Europa.</p>
+<form id="search" class="search"><label for="query" class="sr" data-t="keyword">Yrke eller sökord</label><input id="query" type="search" maxlength="120" placeholder="Exempel: elektriker, developer, Pflegekraft"><button data-t="submit">Sök jobb</button></form>
+</div></section>
+<div class="wrap layout" id="results">
+<aside class="filters"><div class="filter-head"><h2 data-t="filters">Filter</h2><button id="clear" type="button" data-t="clear">Rensa</button></div>
+<form id="filters">
+<label><span data-t="origin">Nuvarande land</span><select id="origin"></select></label>
+<label><span data-t="destination">Jobbets land</span><select id="destination"></select></label>
+<label class="check"><input id="eu" type="checkbox"><span data-t="eu">Endast EU-länder</span></label>
+<label><span data-t="category">Yrkesområde</span><select id="category"></select></label>
+<label><span data-t="education">Utbildningsnivå</span><select id="education"></select></label>
+<label><span data-t="training">Utbildning eller kurs</span><input id="training" maxlength="80"></label>
+<label><span data-t="cert">Certifikat eller behörighet</span><input id="certificate" maxlength="80"></label>
+<label><span data-t="salary">Minsta angivna månadslön (SEK)</span><input id="salary" type="number" min="0" step="1" inputmode="numeric"></label>
+</form></aside>
+<section class="list" aria-labelledby="list-title">
+<div class="eyebrow" data-t="overview">JOBBÖVERSIKT</div><h2 id="list-title" data-t="jobs">Hitta jobb</h2>
+<p id="route"></p><p id="status" role="status" aria-live="polite"></p>
+<div id="cards"></div><button id="more" class="more" type="button" hidden data-t="more">Hämta fler annonser</button>
+<noscript>Aktivera JavaScript för att använda jobbsökningen.</noscript>
+</section>
+</div>
+<section class="sources" id="sources"><div class="wrap"><p class="eyebrow" data-t="coverage">TÄCKNING OCH KÄLLOR</p><h2 data-t="sources">Jobbkällor</h2><p data-t="sourceIntro">Jobbkompassen visar annonser från Platsbanken och JobAd Links. Länkar till övriga portaler öppnar respektive tjänst.</p><div id="portals"></div>
+<p><a id="rights" href="https://europa.eu/youreurope/citizens/work/work-abroad/index_sv.htm" data-t="rights">Läs om att arbeta utomlands hos Your Europe</a></p></div></section>
+</main>
+<footer class="wrap">Jobbkompassen · <span data-t="independent">En fristående jobbsökning</span></footer>
+</body></html>
